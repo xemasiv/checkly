@@ -1,12 +1,10 @@
-# checkly
+# Checkly
 
 ![checkly](https://i.imgur.com/29tOS0o.png)
 
 Truthy, falsey &amp; equality checks simplified.
 
-### Checker.js
-
-* Waterfall checks for:
+* Checks for:
   * truthiness
   * falseyness
   * equality
@@ -16,8 +14,21 @@ Truthy, falsey &amp; equality checks simplified.
   * uses fast-deep equal for `.eq()` and `ineq()`
   * `.can().be().chained()`
   * just call `.check()` at the end
-  * Returns the result of function / promise once you call `check()`
-* Comes with static checkers
+  * Returns the `.pass()` or `.fail()` function / promise once you call `check()`
+#### Static checkers 
+
+* Static checkers return `true` or `false`.
+* Static because they can be accessed from Checkly itself.
+  * i.e. `Checkly.str()`
+  * or destructure it, `var { str } = Checkly;`
+* Checkers list
+  * `str(a)` - if it's a string
+  * `num(a)` - if it's a number
+  * `obj(a)` - if it's an object
+  * `arr(a)` - if it's an array
+  * `und(a)` - if it's undefined
+  * `nul(a)` - if it's null
+  * `equal(a, b)` - if both vars are equal, uses deep-equal
   * (Check the test section below)
 
 #### Sample 1:
@@ -62,22 +73,8 @@ new Checker()
 // passed!
 ```
 
-#### Static checkers 
-
-* Checkers return `true` or `false`.
-* Static because they can be accessed from Checkly itself.
-  * i.e. `Checkly.str()`
-  * or destructure it, `var { str } = Checkly;`
-* Checkers list
-  * `str(a)` - if it's a string
-  * `num(a)` - if it's a number
-  * `obj(a)` - if it's an object
-  * `arr(a)` - if it's an array
-  * `und(a)` - if it's undefined
-  * `nul(a)` - if it's null
-  * `equal(a, b)` - if both vars are equal, uses deep-equal
   
-#### Test
+#### Static check tests
   
 ```
 let Checkly = require("./index.js");
