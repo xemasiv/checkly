@@ -15,8 +15,17 @@ Truthy, falsey &amp; equality checks simplified.
   * `.can().be().chained()`
   * just call `.check()` at the end
   * Returns the `.pass()` or `.fail()` function / promise once you call `check()`
-#### Static checkers 
+* Methods
+  * `new Checkly()` - new checker instance
+  * `.t(...a)` - argument(s) must be true
+  * `.f(...a)` - argument(s) must be false
+  * `.eq(...a)` - argument(s) must be equal
+  * `.ineq(...a)` - argument(s) must be inequal
+  * `.pass(fn)` - sets the function / promise to call and return if all checks passed
+  * `.fail(fn)` - sets the function / promise to call and return if all checks failed
+  * `.check()` - runs the checks, returns the function / promise called.
 
+#### Static checkers  & transforms
 * Static checkers return `true` or `false`.
 * Static because they can be accessed from Checkly itself.
   * i.e. `Checkly.str()`
@@ -28,8 +37,17 @@ Truthy, falsey &amp; equality checks simplified.
   * `arr(a)` - if it's an array
   * `und(a)` - if it's undefined
   * `nul(a)` - if it's null
+  * `emp(a)` - if string / object / array is empty
   * `equal(a, b)` - if both vars are equal, uses deep-equal
   * (Check the test section below)
+* Transforms list
+  * `ti(a)` - shortened parseInt, works with args
+  * `tf(a)` - shortened parseFloat, works with args
+  * `ts(a)` - shortened .toString()
+	* returns undefined if arg is null / undefined
+  * Notes:
+	* Doesn't mutate args, instead we return the transformed args.
+	* Looking to transform circular json's? check out `circular-json`@npm
 
 #### Sample 1:
 
