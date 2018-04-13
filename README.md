@@ -1,4 +1,7 @@
 # checkly
+
+![checkly](https://i.imgur.com/29tOS0o.png)
+
 Truthy, falsey &amp; equality checks simplified.
 
 ### Checker.js
