@@ -3,15 +3,24 @@ var module = Boolean(module) ? module : undefined;
 class Checkly {
   constructor() {
     this._passed = true;
+    this._passthisArg = null;
+    this._passArgs = [];
+    this._failthisArg = null;
+    this._failArgs = [];
   }
   static str(arg) {
     return typeof arg === "string";
   }
   static num(arg) {
-    return typeof arg === "number";
+    return typeof arg === "number" && isNaN(arg) === false;
   }
   static obj(arg) {
-    return typeof arg === "object" && Array.isArray(arg) === false;
+	if (typeof arg === "object" && Array.isArray(arg) === false && arg !== null) {
+	  if (Boolean(arg.__proto__) === true) {
+		return arg.__proto__ !== Map.prototype && arg.__proto__ !== Set.prototype;
+	  }
+	}
+	return false;
   }
   static arr(arg) {
     return Array.isArray(arg) === true;
@@ -22,12 +31,37 @@ class Checkly {
   static nul(arg) {
     return arg === null;
   }
+  static nan(arg) {
+    return isNaN(arg) === true && typeof arg !== "function" && typeof arg !== "object";
+  }
+  static map(arg) {
+	if (typeof arg === "object" && arg !== null) {
+	  if (Boolean(arg.__proto__) === true) {
+		  return arg.__proto__ === Map.prototype;
+	  }
+	}
+	return false;
+  }
+  static set(arg) {
+	if (typeof arg === "object" && arg !== null) {
+	  if (Boolean(arg.__proto__) === true) {
+		  return arg.__proto__ === Set.prototype;
+	  }
+	}
+	return false;
+  }
+  static fnc(arg) {
+	return typeof arg === "function";
+  }
   static emp(arg) {
     let instance = this;
     if (typeof arg === "string") {
       return arg === "";
     }
-    if (typeof arg === "object") {
+    if (typeof arg === "object" && arg !== null) {
+	  if (arg.__proto__ === Map.prototype || arg.__proto__ === Set.prototype) {
+		return arg.size === 0;
+	  }
       return Object.keys(arg).length === 0;
     }
     if (Array.isArray(arg) === true) {
@@ -149,22 +183,26 @@ class Checkly {
     });
     return this;
   }
-  pass(fn) {
+  pass(fn, thisArg, ...args) {
     this._passFn = fn;
+    this._passthisArg = thisArg;
+    this._passArgs = args;
     return this;
   }
-  fail(fn) {
+  fail(fn, thisArg, ...args) {
     this._failFn = fn;
+    this._failthisArg = thisArg;
+    this._failArgs = args;
     return this;
   }
   check() {
     if (this._passed === true) {
-      if (Boolean(this._passFn)) {
-        return this._passFn();
+      if (Boolean(this._passFn) === true) {
+        return this._passFn.apply(this._passthisArg, this._passArgs);
       }
     } else {
-      if (Boolean(this._failFn)) {
-        return this._failFn();
+      if (Boolean(this._failFn) === true) {
+        return this._failFn.apply(this._passthisArg, this._passArgs);
       }
     }
   }
