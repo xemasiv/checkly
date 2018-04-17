@@ -1,5 +1,3 @@
-var window = Boolean(window) ? window : undefined;
-var module = Boolean(module) ? module : undefined;
 class Checkly {
   constructor() {
     this._passed = true;
@@ -207,17 +205,8 @@ class Checkly {
     }
   }
 }
-
-new Checkly()
-  .f(Checkly.und(window))
-  .pass(() => {
-    window.Checkly = Checkly;
-  })
-  .check();
-
-new Checkly()
-  .f(Checkly.und(module))
-  .pass(() => {
-    module.exports = Checkly;
-  })
-  .check();
+if (typeof window !== 'undefined') {
+  Window.Checkly = Checkly;
+} else if (typeof module !== 'undefined') {
+  module.exports = Checkly;
+}

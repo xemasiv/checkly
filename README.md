@@ -27,9 +27,11 @@ Truthy, falsey &amp; equality checks simplified.
 
 #### Changelog
 
+* v2.1
+  * `/dist/checkly.min.js` for browser
 * v2
-  * Stricter checks.
-  * Added `map`, `set`, `nan` and `fnc` checks.
+  * Stricter checks
+  * Added `map`, `set`, `nan` and `fnc` checks
   * pass(fn) now pass(fn, thisArg, ...args)
   * fail(fn) now fail(fn, thisArg, ...args)
   
