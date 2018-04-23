@@ -35,6 +35,8 @@ Truthy, falsey &amp; equality checks simplified.
 
 #### Changelog
 
+* v3.1.1
+  * Fix typo
 * v3.1
   * Cleaned up redundant methods
   * Added new static checkers
@@ -93,7 +95,7 @@ Truthy, falsey &amp; equality checks simplified.
   * `.ge(a, b)`
     * a >= b
   * `.le(a, b)`
-    * a >= b
+    * a <= b
 * Transforms list
   * `ti(a)` - shortened parseInt, works with args
   * `tf(a)` - shortened parseFloat, works with args
