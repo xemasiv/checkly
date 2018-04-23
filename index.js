@@ -1,11 +1,4 @@
 class Checkly {
-  constructor() {
-    this._passed = true;
-    this._passthisArg = null;
-    this._passArgs = [];
-    this._failthisArg = null;
-    this._failArgs = [];
-  }
   static str(arg) {
     return typeof arg === "string";
   }
@@ -13,12 +6,12 @@ class Checkly {
     return typeof arg === "number" && isNaN(arg) === false;
   }
   static obj(arg) {
-	if (typeof arg === "object" && Array.isArray(arg) === false && arg !== null) {
-	  if (Boolean(arg.__proto__) === true) {
-		return arg.__proto__ !== Map.prototype && arg.__proto__ !== Set.prototype;
-	  }
-	}
-	return false;
+  	if (typeof arg === "object" && Array.isArray(arg) === false && arg !== null) {
+  	  if (Boolean(arg.__proto__) === true) {
+  		return arg.__proto__ !== Map.prototype && arg.__proto__ !== Set.prototype;
+  	  }
+  	}
+  	return false;
   }
   static arr(arg) {
     return Array.isArray(arg) === true;
@@ -30,26 +23,26 @@ class Checkly {
     return arg === null;
   }
   static nan(arg) {
-    return isNaN(arg) === true && typeof arg !== "function" && typeof arg !== "object";
+    return isNaN(arg) === true && typeof arg !== "function" && typeof arg !== "object" && typeof arg !== "undefined";
   }
   static map(arg) {
-	if (typeof arg === "object" && arg !== null) {
-	  if (Boolean(arg.__proto__) === true) {
-		  return arg.__proto__ === Map.prototype;
-	  }
-	}
-	return false;
+  	if (typeof arg === "object" && arg !== null) {
+  	  if (Boolean(arg.__proto__) === true) {
+  		  return arg.__proto__ === Map.prototype;
+  	  }
+  	}
+  	return false;
   }
   static set(arg) {
-	if (typeof arg === "object" && arg !== null) {
-	  if (Boolean(arg.__proto__) === true) {
-		  return arg.__proto__ === Set.prototype;
-	  }
-	}
-	return false;
+  	if (typeof arg === "object" && arg !== null) {
+  	  if (Boolean(arg.__proto__) === true) {
+  		  return arg.__proto__ === Set.prototype;
+  	  }
+  	}
+  	return false;
   }
   static fnc(arg) {
-	return typeof arg === "function";
+	   return typeof arg === "function";
   }
   static emp(arg) {
     let instance = this;
@@ -67,15 +60,39 @@ class Checkly {
     }
   }
   static ti(...args) {
-	return parseInt.apply(null, args);
+	   return parseInt.apply(null, args);
   }
   static tf(...args) {
-	return parseFloat.apply(null, args);
+	   return parseFloat.apply(null, args);
   }
   static ts(arg) {
-	if (Checkly.nul(arg) === false && Checkly.und(arg) === false) {
-		return arg.toString();
-	}
+  	if (Checkly.nul(arg) === false && Checkly.und(arg) === false) {
+  		return arg.toString();
+  	}
+  }
+  static g(a, b) {
+    if (Checkly.num(a) === true && Checkly.num(b) === true) {
+      return a > b;
+    }
+    return false;
+  }
+  static l(a, b) {
+    if (Checkly.num(a) === true && Checkly.num(b) === true) {
+      return a < b;
+    }
+    return false;
+  }
+  static ge(a, b) {
+    if (Checkly.num(a) === true && Checkly.num(b) === true) {
+      return a >= b;
+    }
+    return false;
+  }
+  static le(a, b) {
+    if (Checkly.num(a) === true && Checkly.num(b) === true) {
+      return a <= b;
+    }
+    return false;
   }
   static pairwise(list) {
     // https://codereview.stackexchange.com/a/75667
@@ -127,82 +144,138 @@ class Checkly {
     }
     return false;
   }
+  constructor() {
+    this._passed = true;
+    this._lastCheckPassed = true;
+    this._errors = [];
+  }
   t(...args) {
     let instance = this;
+    instance._lastCheckPassed = true;
     args.map(arg => {
       if (Boolean(arg) === false) {
         instance._passed = false;
+        instance._lastCheckPassed = false;
       }
     });
     return this;
   }
   f(...args) {
     let instance = this;
+    instance._lastCheckPassed = true;
     args.map(arg => {
       if (Boolean(arg) === true) {
         instance._passed = false;
+        instance._lastCheckPassed = false;
       }
     });
     return this;
   }
   eq(...args) {
     let instance = this;
+    instance._lastCheckPassed = true;
     let pairs = Checkly.pairwise(args);
     pairs.map(pair => {
       if (Checkly.equal.apply(null, pair) === false) {
         instance._passed = false;
+        instance._lastCheckPassed = false;
       }
     });
     return this;
   }
   ineq(...args) {
     let instance = this;
+    instance._lastCheckPassed = true;
     let pairs = Checkly.pairwise(args);
     pairs.map(pair => {
       if (Checkly.equal.apply(null, pair) === true) {
         instance._passed = false;
+        instance._lastCheckPassed = false;
       }
     });
     return this;
   }
-  e(...args) {
+  g(...args) {
     let instance = this;
-    args.map(arg => {
-      if (typeof arg === "object") {
-        if (Object.keys(arg).length === 0) {
-          instance._passed = false;
-        }
-      }
-      if (Array.isArray(arg) === true) {
-        if (arg.length === 0) {
-          instance._passed = false;
-        }
+    instance._lastCheckPassed = true;
+    let pairs = Checkly.pairwise(args);
+    pairs.map(pair => {
+      if (Checkly.g.apply(null, pair) === false) {
+        instance._passed = false;
+        instance._lastCheckPassed = false;
       }
     });
     return this;
   }
-  pass(fn, thisArg, ...args) {
-    this._passFn = fn;
-    this._passthisArg = thisArg;
-    this._passArgs = args;
+  l(...args) {
+    let instance = this;
+    instance._lastCheckPassed = true;
+    let pairs = Checkly.pairwise(args);
+    pairs.map(pair => {
+      if (Checkly.l.apply(null, pair) === false) {
+        instance._passed = false;
+        instance._lastCheckPassed = false;
+      }
+    });
     return this;
   }
-  fail(fn, thisArg, ...args) {
+  ge(...args) {
+    let instance = this;
+    instance._lastCheckPassed = true;
+    let pairs = Checkly.pairwise(args);
+    pairs.map(pair => {
+      if (Checkly.ge.apply(null, pair) === false) {
+        instance._passed = false;
+        instance._lastCheckPassed = false;
+      }
+    });
+    return this;
+  }
+  le(...args) {
+    let instance = this;
+    instance._lastCheckPassed = true;
+    let pairs = Checkly.pairwise(args);
+    pairs.map(pair => {
+      if (Checkly.le.apply(null, pair) === false) {
+        instance._passed = false;
+        instance._lastCheckPassed = false;
+      }
+    });
+    return this;
+  }
+  err (...args) {
+    if (this._passed === false && this._lastCheckPassed === false) {
+      args.map((arg) => this._errors.push(arg));
+    }
+    return this;
+  }
+  pass(fn) {
+    this._passFn = fn;
+    return this;
+  }
+  fail(fn) {
     this._failFn = fn;
-    this._failthisArg = thisArg;
-    this._failArgs = args;
     return this;
   }
   check() {
     if (this._passed === true) {
       if (Boolean(this._passFn) === true) {
-        return this._passFn.apply(this._passthisArg, this._passArgs);
+        return this._passFn.apply(null, []);
       }
     } else {
       if (Boolean(this._failFn) === true) {
-        return this._failFn.apply(this._passthisArg, this._passArgs);
+        return this._failFn.apply(null, [this._errors]);
       }
     }
+  }
+  get errors () {
+    return this._errors;
+  }
+  get lastError () {
+    return this._errors[this._errors.length - 1];
+  }
+  get firstError () {
+    return this._errors[0];
   }
 }
 if (typeof window !== 'undefined') {

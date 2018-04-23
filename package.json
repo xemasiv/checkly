@@ -1,6 +1,6 @@
 {
   "name": "checkly",
-  "version": "2.1.0",
+  "version": "3.1.0",
   "description": "Truthy, falsey & equality checks simplified.",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,7 @@
     "checks"
   ],
   "author": "xemasiv <xemasiv@gmail.com>",
-  "license": "Unlicense",
+  "license": "CC0-1.0",
   "bugs": {
     "url": "https://github.com/xemasiv/checkly/issues"
   },

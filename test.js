@@ -27,9 +27,11 @@ const testFunctions = [
 const testObjects = [
 	{label: 'string, empty', value: ''},
 	{label: 'string, non-empty', value: '1'},
-	{label: 'number, negative', value: -1},
-	{label: 'number, zero', value: 0},
-	{label: 'number, positive', value: 1},
+	{label: 'number, -1.5', value: -1.50},
+	{label: 'number, -1', value: -1},
+	{label: 'number, 0', value: 0},
+	{label: 'number, 1', value: 1},
+	{label: 'number, 1.5', value: 1.50},
 	{label: 'array, empty', value: []},
 	{label: 'array, non-empty', value: [1]},
 	{label: 'object, empty', value: {}},
@@ -51,6 +53,20 @@ testFunctions.map((tFunc, index) => {
 	console.log(' ');
 });
 
+const { g, l, ge, le, equal } = Checkly;
+
+console.log('arg0, arg1, g, ge, l, le, equal, !equal');
+Checkly.pairwise([5, 10, 10, 20]).map((pair) => {
+  let arg0 = pair[0];
+  let arg1 = pair[1];
+  console.log(
+    arg0, arg1,
+    g(arg0, arg1), ge(arg0, arg1),
+    l(arg0, arg1), le(arg0, arg1),
+    equal(arg0, arg1), !equal(arg0, arg1)
+  );
+});
+
 console.log('should pass:');
 new Checkly()
 	.t(true)
@@ -64,7 +80,7 @@ new Checkly()
 		console.log("fail");
 	})
 	.check();
-	
+
 console.log('should pass with multiple args on checks:');
 new Checkly()
 	.t(true, 1)
@@ -78,12 +94,12 @@ new Checkly()
 		console.log("fail");
 	})
 	.check();
-	
+
 console.log('should fail:');
 new Checkly()
 	.t(true)
 	.f(false)
-	.eq(1,2) // failure, args not equal 
+	.eq(1,2) // failure, args not equal
 	.ineq(1,2)
 	.pass(() => {
 		console.log("pass");
@@ -93,33 +109,34 @@ new Checkly()
 	})
 	.check();
 
-console.log('pass func with args:');
+console.log('show error:');
 new Checkly()
-	.t(true)
-	.f(false)
-	.eq(1,1)
-	.ineq(1,2)
-	.pass((...args) => {
-		console.log.apply(null, args);
-	}, null, 1,2,3)
-	.fail(() => {
-		console.log("fail");
-	})
-	.check();
-
-console.log('fail func with args:');
-new Checkly()
-	.t(true)
-	.f(false)
-	.eq(1,2) // failure, args not equal 
-	.ineq(1,2)
-	.pass((...args) => {
-		console.log.apply(null, args);
-	}, null, 1,2,3)
-	.fail((...args) => {
-		console.log.apply(null, args);
-	}, null, 1,2,3)
-	.check();
+  .t(0)
+    .err('arg not truthy')
+  .f(1)
+    .err('arg not falsey')
+  .eq(1, 2)
+    .err('1 and 2 not equal')
+  .ineq(4, 4)
+    .err('4 and 5 equal')
+  .g(3, 2, 1)
+    .err('error on greater than')
+  .l(1, 2, 3)
+    .err('error on less than')
+  .ge(3, 2, 2, 1)
+    .err('error on greater than or equal')
+  .le(1, 2, 2, 4)
+    .err('error on less than or equal')
+  .pass(() => Promise.resolve())
+  .fail((errors) => Promise.reject(errors[0]))
+  .check()
+  .then(() => console.log('passed!'))
+  .catch((error) => {
+    console.log(error);
+    // console.log('.errors:', check1.errors);
+    // console.log('.firstError:', check1.firstError);
+    // console.log('.lastError:', check1.lastError);
+  });
 
 setTimeout(() => {
 	console.log('should pass, and resolve promise:');
@@ -148,7 +165,7 @@ setTimeout(() => {
 	new Checkly()
 		.t(true)
 		.f(false)
-		.eq(1,2) // failure, args not equal 
+		.eq(1,2) // failure, args not equal
 		.ineq(1,2)
 		.pass(() => {
 			return Promise.resolve('pass');
